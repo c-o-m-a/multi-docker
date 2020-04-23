@@ -1,0 +1,24 @@
+language: generic 
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t cooma/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true cooma/react-test npm test
+
+after_success:
+  #build images
+  - docker build -t cooma/multi-client ./client
+  - docker build -t cooma/multi-nginx ./nginx
+  - docker build -t cooma/multi-server ./server 
+  - docker build -t cooma/multi-worker ./worker
+  # Login to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push to Docker HUB
+  - docker push cooma/multi-client
+  - docker push cooma/multi-nginx
+  - docker push cooma/multi-server
+  - docker push cooma/multi-worker
