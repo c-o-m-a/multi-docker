@@ -22,3 +22,4 @@ after_success:
   - docker push cooma/multi-nginx
   - docker push cooma/multi-server
   - docker push cooma/multi-worker
+  
